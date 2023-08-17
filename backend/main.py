@@ -1,7 +1,9 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from typing import List
+import secrets
 
 app = FastAPI()
 
@@ -22,6 +24,7 @@ class ConnectionManager:
         self.active_connections: List[WebSocket] = []
         self.messages: List[Message] = []
         self.active_users: List[str] = []
+        self.csrf_tokens: dict = {}
 
     async def connect(self, websocket: WebSocket, name: str):
         if not name or name.lower() in ["null", "undefined"] or name.lower() in [user.lower() for user in self.active_users]:
@@ -30,16 +33,20 @@ class ConnectionManager:
         await websocket.accept()
         self.active_connections.append(websocket)
         self.active_users.append(name)
+        csrf_token = secrets.token_hex(16)
+        self.csrf_tokens[name] = csrf_token
         message = Message(name="System", content=f"{name} has joined the chat.")
         self.messages.append(message)
         await self.broadcast({"type": "join", "name": name}, exclude=websocket)
         for message in self.messages:
             await websocket.send_json({"type": "message", "message": message.dict()})
+        await websocket.send_json({"type": "csrf_token", "csrf_token": csrf_token})
         await self.broadcast_active_users()
 
     def disconnect(self, websocket: WebSocket, name: str):
         self.active_connections.remove(websocket)
         self.active_users.remove(name)
+        del self.csrf_tokens[name]
         message = Message(name="System", content=f"{name} has left the chat.")
         self.messages.append(message)
         self.broadcast({"type": "leave", "name": name})
@@ -63,8 +70,12 @@ async def websocket_endpoint(websocket: WebSocket, name: str):
         while True:
             data = await websocket.receive_json()
             if data["type"] == "message":
+                if data.get("csrf_token") != manager.csrf_tokens.get(name):
+                    await websocket.close(code=4001)
+                    return
                 message = Message(**data["message"])
                 manager.messages.append(message)
                 await manager.broadcast(data)
     except WebSocketDisconnect:
         manager.disconnect(websocket, name)
+
