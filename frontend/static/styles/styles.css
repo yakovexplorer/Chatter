@@ -62,7 +62,6 @@ body {
 input, button {
     background-color: var(--interface-color);
     border: none;
-    border-radius: 4px; /* Add rounded corners */
     box-sizing: border-box;
     color: var(--text-color);
     font-size: var(--font-size);
@@ -85,6 +84,41 @@ button {
     to { opacity: 1; transform: translateY(0); }
 }
 
+.activeUsersTit {
+    align-items: normal;
+}
+
 p {
     animation: fadeIn 0.5s ease-in;
+}
+
+#message-container {
+    align-items: stretch; /* This keeps the input field and emoji button on the same line and same height */
+}
+
+#message {
+    flex-grow: 1; /* This lets the input field take up the remaining space */
+}
+
+#emojiButton {
+    background-color: var(--interface-color);
+    border: none;
+    box-sizing: border-box;
+    color: var(--text-color);
+    font-size: var(--font-size);
+    padding: 1rem;
+    transition: background-color var(--transition-time) linear;
+    cursor: pointer;  /* Changes mouse icon on hover over button */
+}
+
+#emojiButton:focus, 
+#emojiButton:hover {
+    background-color: var(--button-color);
+}
+
+#emojiPicker {
+    position: absolute;
+    bottom: 3rem;
+    right: 1rem;
+    z-index: 2; /* Ensures the emoji picker appears above the other contents */
 }

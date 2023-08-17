@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script type="module" src="https://unpkg.com/emoji-picker-element"></script>
+    <script type="module" src="/static/javascript/modules/marked.min.js"></script>
+    <script src="https://unpkg.com/dompurify"></script>
+    <script src="/static/javascript/main.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/styles/styles.css">
     <title>Chatter - A basic chatting room</title>
 </head>
 <body>
     <div id="app">
         <div id="activeUsers">
-            <h2>Active Users (BETA)</h2>
+            <h2 class="activeUsersTit">Active Users (BETA)</h2>
             <p>Please log in first.</p>
         </div>
         <div id="messages"></div>
         <div id="inputArea">
-            <input id="message" type="text" placeholder="Enter your message">
+            <!--Wrap input and emoji-button in div-->
+            <div id="message-container">
+                <input id="message" type="text" placeholder="Enter your message">
+                <button id="emojiButton">🙂</button> <!-- Emoji Button -->
+            </div>
+            <emoji-picker id="emojiPicker" style="display: none;"></emoji-picker> <!-- Initially hidden -->
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
-    <script src="https://unpkg.com/dompurify"></script>
-    <script src="/static/javascript/main.js"></script>
 </body>
 </html>
