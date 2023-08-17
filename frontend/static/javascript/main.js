@@ -3,10 +3,10 @@ let lastUserId = 0;
 let Username;
 let Message = "Please enter your name before proceed. We need that so we know who you are.";
 
-window.onload = async function() {
+window.onload = async function () {
     while (!Username) {
         let inputname = prompt(Message);
-        
+
         const response = await fetch(`http://localhost:80/join/${inputname}`, {
             method: 'POST',
             headers: {
@@ -24,7 +24,7 @@ window.onload = async function() {
         }
     }
 
-    document.getElementById('message').addEventListener('keydown', function(e) {
+    document.getElementById('message').addEventListener('keydown', function (e) {
         if (e.keyCode === 13) {
             e.preventDefault();
             sendMessage();
@@ -37,7 +37,7 @@ window.onload = async function() {
     setInterval(loadActiveUsers, 1000);
 };
 
-window.onbeforeunload = function() {
+window.onbeforeunload = function () {
     fetch(`http://localhost:80/leave/${Username}`, {
         method: 'POST',
         headers: {
@@ -82,9 +82,9 @@ async function loadMessages() {
 
     for (const message of messages.slice(lastMessageId)) {
         const messageElement = document.createElement('p');
-        messageElement.innerHTML = `<strong>${message.name}</strong>: ${message.content}`;
+        messageElement.innerHTML = DOMPurify.sanitize(`<strong>${message.name}</strong>: ${message.content}`);;
         messagesDiv.appendChild(messageElement);
-        messagesDiv.scrollBy(0,messagesDiv.scrollHeight);
+        messagesDiv.scrollBy(0, messagesDiv.scrollHeight);
     }
 
     lastMessageId = messages.length;
