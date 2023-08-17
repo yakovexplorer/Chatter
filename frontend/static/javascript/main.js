@@ -31,6 +31,16 @@ window.onload = async function () {
         }
     });
 
+    document.getElementById('emojiButton').addEventListener('click', function() {
+        const emojiPicker = document.getElementById('emojiPicker');
+        emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    });
+      
+    document.querySelector('emoji-picker')
+        .addEventListener('emoji-click', event => {
+          document.getElementById('message').value += event.detail.unicode;
+    });  
+
     loadMessages();
     loadActiveUsers();
     setInterval(loadMessages, 1000);
@@ -81,8 +91,22 @@ async function loadMessages() {
     const messagesDiv = document.getElementById('messages');
 
     for (const message of messages.slice(lastMessageId)) {
+        message.content = message.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        let messageContent;
+
+        if (/[_*~`#]/.test(message.content)) {
+            // The message content contains characters used in Markdown (like *, _, ~, `)
+            // Let's parse it as Markdown
+            messageContent = marked.parse(message.content);
+        } else {
+            // No special Markdown characters found in the message content,
+            // Let's display it as plain text
+            messageContent = message.content;
+        }
+
         const messageElement = document.createElement('p');
-        messageElement.innerHTML = DOMPurify.sanitize(`<strong>${message.name}</strong>: ${message.content}`);;
+        messageElement.innerHTML = `<strong>${message.name}</strong>: ${messageContent}`;
         messagesDiv.appendChild(messageElement);
         messagesDiv.scrollBy(0, messagesDiv.scrollHeight);
     }
@@ -95,7 +119,7 @@ async function loadActiveUsers() {
     const users = await response.json();
 
     const usersDiv = document.getElementById('activeUsers');
-
+    
     for (const user of users.slice(lastUserId)) {
         const userElement = document.createElement('p');
         userElement.textContent = user;
