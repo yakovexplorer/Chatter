@@ -74,6 +74,23 @@ function setupEventListeners() {
     });
 
     document.querySelector('.button-v2').addEventListener('click', sendMessage);
+
+    // Add these lines to your 'setupEventListeners' function.
+document.querySelector('#emoji-button').addEventListener('click', toggleEmojiPicker);
+document.querySelector('emoji-picker').addEventListener('emoji-click', addEmojiToTextarea);
+}
+
+function toggleEmojiPicker() {
+    const emojiPicker = document.querySelector('emoji-picker');
+    // toggle the 'hidden' attribute on the emoji picker
+    emojiPicker.hidden = !emojiPicker.hidden;
+}
+
+function addEmojiToTextarea(e) {
+  const emoji = e.detail.unicode;
+  const textarea = document.querySelector('.chatroom-textarea');
+  // Append the selected emoji to the textarea content
+  textarea.value += emoji;
 }
 
 function displaySystemMessage(msg) {
