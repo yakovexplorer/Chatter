@@ -1,124 +1,498 @@
-:root {
-    --main-font: Arial, sans-serif;
-    --bg-gradient-start: #333;
-    --bg-gradient-end: #444;
-    --text-color: #fff;
-    --interface-color: #555;
-    --button-color: #007BFF;
-    --font-size: 1.125rem;  /* 18px */
-    --transition-time: 0.3s;
-}
-
-body {
-    background: linear-gradient(to right, var(--bg-gradient-start), var(--bg-gradient-end));
-    color: var(--text-color);
-    display: flex;
-    flex-direction: column;
-    font-family: var(--main-font);
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-}
-
-#app {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    margin: 1rem auto;
-    max-width: 600px;
-    padding: 20px;
-}
-
-#activeUsers {
-    bottom: 0;
-    box-sizing: border-box;
-    font-size: var(--font-size);
-    left: 0;
-    overflow-y: auto;
-    padding: 20px;
-    position: fixed;
-    top: 0;
-    width: 200px;
-    background-color: rgba(0,0,0,0.4); /* Add a bit of faded black background */
-    transition: padding var(--transition-time) linear;   
-}
-
-#activeUsers:hover {
-    padding: 30px;  /* Increase padding on hover */
-}
-
-#messages {
-    flex-grow: 1;
-    font-size: var(--font-size);
-    margin: 20px 0 10px 0;
-    overflow-y: auto;
-}
-
-.input-area {
-    display: flex;
-    flex-direction: column;
-}
-
-input, button {
-    background-color: var(--interface-color);
-    border: none;
-    box-sizing: border-box;
-    color: var(--text-color);
-    font-size: var(--font-size);
-    padding: 1rem;
+.list {
     width: 100%;
-    transition: background-color var(--transition-time) linear;   
+    margin: 1em 0px 1em 0px;
+    display: block;
+    padding: 0px 0px 0px 1.5rem;
+    list-style-type: none;
+    list-style-position: outside;
 }
 
-input:focus, button:hover {
-    background-color: var(--button-color);  /* Change color on focus and hover */
+.list-item {
+    display: list-item;
 }
 
-button {
-    margin-top: 1rem; /* Add some margin at the top of the button */
-    color: #fff; /* Make button text white */
+.dropdown-title {
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    transition: 0.3s;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.dropdown-title:hover {
+    opacity: 0.5;
 }
 
-.activeUsersTit {
-    align-items: normal;
-}
-
-p {
-    animation: fadeIn 0.5s ease-in;
-}
-
-#message-container {
-    align-items: stretch; /* This keeps the input field and emoji button on the same line and same height */
-}
-
-#message {
-    flex-grow: 1; /* This lets the input field take up the remaining space */
-}
-
-#emojiButton {
-    background-color: var(--interface-color);
-    border: none;
-    box-sizing: border-box;
-    color: var(--text-color);
-    font-size: var(--font-size);
+.user {
+    width: 100%;
+    cursor: not-allowed;
+    height: 100%;
+    display: flex;
     padding: 1rem;
-    transition: background-color var(--transition-time) linear;
-    cursor: pointer;  /* Changes mouse icon on hover over button */
+    align-self: flex-start;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.19);
+    transition: 0.3s;
+    align-items: center;
+    border-color: rgba(0, 0, 0, 0);
+    border-width: 2px;
+    border-radius: 12px;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #ffffff;
 }
 
-#emojiButton:focus, 
-#emojiButton:hover {
-    background-color: var(--button-color);
+.user:hover {
+    box-shadow: 0px 0px 8px 0px #89a8ff;
+    border-color: #89a8ff;
 }
 
-#emojiPicker {
-    position: absolute;
-    bottom: 3rem;
-    right: 1rem;
-    z-index: 2; /* Ensures the emoji picker appears above the other contents */
+.user-dropdown {
+    gap: 1rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    padding: 1rem;
+    align-self: flex-start;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.19);
+    align-items: flex-start;
+    border-radius: 12px;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: #ffffff;
+}
+
+.user-list {
+    gap: 8px;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.main {
+    gap: 1rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.main-Interaction {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.19);
+    max-height: 700px;
+    align-items: center;
+    border-radius: 12px;
+    flex-direction: column;
+    background-color: #ffffff;
+}
+
+.main-contents {
+    gap: 1rem;
+    flex: 1;
+    width: 100%;
+    display: flex;
+    padding: 1rem;
+    overflow: auto;
+    margin-top: 0px;
+    padding-top: 0px;
+    flex-direction: column;
+    padding-bottom: 24px;
+}
+
+.chat-you {
+    gap: 8px;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.chat-you-container {
+    gap: 6px;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.chat-you-message {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding-top: 14px;
+    padding-left: 14px;
+    border-radius: 14px;
+    padding-right: 14px;
+    flex-direction: row;
+    padding-bottom: 14px;
+    justify-content: flex-end;
+    background-color: #2d5de7;
+    border-bottom-right-radius: 6px;
+}
+
+.chat-you-icon {
+    display: flex;
+    padding: 6px;
+    align-items: flex-end;
+    border-radius: 50%;
+    flex-direction: row;
+    justify-content: flex-end;
+    background-color: #ffecd2;
+}
+
+.chat-user {
+    gap: 8px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.chat-user-container {
+    gap: 6px;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.chat-user-message {
+    gap: 1rem;
+    flex: 0.8;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 14px;
+    padding-left: 14px;
+    border-radius: 14px;
+    padding-right: 14px;
+    flex-direction: column;
+    padding-bottom: 1rem;
+    justify-content: flex-start;
+    background-color: #38404e;
+    border-bottom-left-radius: 6px;
+}
+
+.main-input-container {
+    width: 100%;
+    display: flex;
+    box-shadow: 0px -5px 10px 0px rgba(212, 212, 212, 0.4);
+    align-items: stretch;
+    padding-top: 8px;
+    padding-left: 8px;
+    margin-bottom: 8px;
+    padding-right: 8px;
+    flex-direction: column;
+    justify-content: space-between;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+}
+
+.main-input {
+    flex: 1;
+    resize: none;
+    outline: none;
+    font-size: 14px;
+    line-height: 1.5;
+    padding-top: 1rem;
+    user-select: none;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 1rem;
+    background-color: #f1f1f1;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.main-actions {
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    flex-direction: row;
+    padding-bottom: 8px;
+    justify-content: space-between;
+    background-color: #f1f1f1;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.main-actions-buttons {
+    gap: 12px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.main-actions-buttons-button {
+    fill: #a9a9a9;
+    cursor: pointer;
+    display: flex;
+    padding: 8px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.19);
+    transition: 0.3s;
+    align-items: center;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #ffffff;
+}
+
+.main-actions-buttons-button:hover {
+    fill: #89a8ff;
+}
+
+.main-actions-button {
+    fill: #a9a9a9;
+    width: 20px;
+    cursor: pointer;
+    height: 20px;
+    transition: 0.3s;
+}
+
+.main-actions-button:hover {
+    fill: #89a8ff;
+}
+
+.button-v2 {
+    color: white;
+    cursor: pointer;
+    display: flex;
+    transition: 0.3s;
+    align-items: center;
+    margin-left: 1rem;
+    padding-top: 12px;
+    border-color: black;
+    border-width: 2px;
+    padding-left: 1rem;
+    border-radius: 8px;
+    padding-right: 1rem;
+    flex-direction: row;
+    padding-bottom: 12px;
+    justify-content: space-between;
+    background-color: #000000;
+}
+
+.button-v2:hover {
+    color: black;
+    border-color: black;
+    background-color: #ffffff;
+}
+
+.view {
+    gap: 1rem;
+    width: 100%;
+    display: flex;
+    max-width: 1000px;
+    min-width: 400px;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.knob {
+    width: 100%;
+}
+
+.track {
+    display: flex;
+}
+
+.slider {
+    display: flex;
+}
+
+.view-side {
+    gap: 1rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    max-width: 300px;
+    align-items: center;
+    flex-direction: column;
+}
+
+.chat-actions {
+    display: flex;
+    margin-top: 8px;
+    margin-left: 32px;
+    border-color: rgba(0, 0, 0, 0.13);
+    border-width: 1px;
+    margin-right: 32px;
+    padding-left: 0px;
+    border-radius: 14px;
+    margin-bottom: 8px;
+    padding-right: 0px;
+}
+
+.chat-user-name {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.Heading {
+    font-size: 32px;
+    font-family: Inter;
+    font-weight: 700;
+    line-height: 1.15;
+    text-transform: none;
+    text-decoration: none;
+}
+
+.Content {
+    font-size: 16px;
+    font-family: Inter;
+    font-weight: 400;
+    line-height: 1.15;
+    text-transform: none;
+    text-decoration: none;
+}
+
+.chatroom-container {
+    gap: 1rem;
+    width: 100%;
+    display: flex;
+    padding: 24px;
+    overflow: auto;
+    min-height: 100vh;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: center;
+    background-color: #131925;
+}
+
+.chatroom-view {
+    max-width: 1500px;
+    max-height: 80%;
+    align-items: stretch;
+}
+
+.chatroom-side {
+    justify-content: center;
+}
+
+.chatroom-dropdown {
+    gap: 24px;
+    max-height: 800px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    background-color: #222935;
+}
+
+.chatroom-text {
+    gap: 4px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.chatroom-text1 {
+    color: #ffffff;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+}
+
+.chatroom-icon {
+    fill: #38404e;
+    width: 24px;
+    height: 24px;
+}
+
+.chatroom-user {
+    padding-top: 1rem;
+    padding-left: 1rem;
+    border-radius: 8px;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
+    background-color: #38404e;
+}
+
+.chatroom-text2 {
+    gap: 4px;
+    width: 80%;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.chatroom-text3 {
+    color: rgb(255, 255, 255);
+}
+
+.chatroom-interaction {
+    max-height: 800px;
+    background-color: #222935;
+}
+
+.chatroom-text4 {
+    color: rgb(255, 255, 255);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.chatroom-text5 {
+    color: rgb(255, 255, 255);
+    line-height: 1.5;
+}
+
+.chatroom-input-container {
+    box-shadow: 0px -5px 10px 0px rgba(0, 0, 0, 0.4);
+}
+
+.chatroom-textarea {
+    color: #ffffff;
+    background-color: #282f3b;
+}
+
+.chatroom-system {
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.chatroom-actions {
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: #282f3b;
+}
+
+.chatroom-button {
+    background-color: #38404e;
+}
+
+.chatroom-icon2 {
+    width: 24px;
+    height: 24px;
+}
+
+.chatroom-text6 {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+}
+
+@media (max-width: 767px) {
+    .chatroom-view {
+        flex: 1;
+        flex-direction: column;
+    }
+
+    .chatroom-side {
+        max-width: 100%;
+    }
 }
