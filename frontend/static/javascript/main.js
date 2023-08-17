@@ -35,6 +35,8 @@ async function login() {
                     displayActiveUsers(data.users);
                 } else if (data.type === 'csrf_token') {
                     csrfToken = data.csrf_token;
+                } else if (data.type === 'ping') {
+                    socket.send(JSON.stringify({type: 'pong'}));
                 }
             }
             socket.onopen = (event) => {
@@ -50,6 +52,7 @@ async function login() {
                 }
             }
             window.addEventListener('beforeunload', () => {
+                socket.send(JSON.stringify({type: 'leave'}));
                 socket.close();
             });
         } catch (error) {
@@ -94,7 +97,7 @@ async function sendMessage() {
     };
 
     try {
-        socket.send(JSON.stringify({ type: 'message', message, csrf_token: csrfToken }));
+        socket.send(JSON.stringify({type: 'message', message, csrf_token: csrfToken}));
         document.querySelector('.chatroom-textarea').value = '';
     } catch (error) {
         alert("An error occurred while trying to send your message. Please check your network connection and try again.");
