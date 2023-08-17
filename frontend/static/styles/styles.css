@@ -459,10 +459,10 @@
 }
 
 .chatroom-system {
-  color: rgba(255, 255, 255, 0.2);
-  text-align: center;
-  padding-top: 8px;
-  padding-bottom: 8px;
+    color: rgba(255, 255, 255, 0.2);
+    text-align: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 .chatroom-actions {
@@ -495,4 +495,11 @@
     .chatroom-side {
         max-width: 100%;
     }
+}
+
+emoji-picker {
+    --num-columns: 6;
+    --emoji-size: 1.5rem;
+    --background: #232934;
+    --border-color: #3a404d;
 }

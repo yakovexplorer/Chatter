@@ -6,6 +6,7 @@ let lastMessageId = 0;
 let lastUserId = 0;
 let Username;
 let socket;
+let csrfToken;
 
 window.addEventListener('load', async () => {
     await login();
@@ -32,6 +33,10 @@ async function login() {
                     displaySystemMessage(`${data.name} has left the chat.`);
                 } else if (data.type === 'active_users') {
                     displayActiveUsers(data.users);
+                } else if (data.type === 'csrf_token') {
+                    csrfToken = data.csrf_token;
+                } else if (data.type === 'ping') {
+                    socket.send(JSON.stringify({type: 'pong'}));
                 }
             }
             socket.onopen = (event) => {
@@ -41,9 +46,13 @@ async function login() {
                 if (event.code === 4000) {
                     alert("The username is invalid or already in use. Please choose another one.");
                     window.location.reload();
+                } else if (event.code === 4001) {
+                    alert("Invalid CSRF token. Please try again.");
+                    window.location.reload();
                 }
             }
             window.addEventListener('beforeunload', () => {
+                socket.send(JSON.stringify({type: 'leave'}));
                 socket.close();
             });
         } catch (error) {
@@ -65,6 +74,23 @@ function setupEventListeners() {
     });
 
     document.querySelector('.button-v2').addEventListener('click', sendMessage);
+
+    // Add these lines to your 'setupEventListeners' function.
+document.querySelector('#emoji-button').addEventListener('click', toggleEmojiPicker);
+document.querySelector('emoji-picker').addEventListener('emoji-click', addEmojiToTextarea);
+}
+
+function toggleEmojiPicker() {
+    const emojiPicker = document.querySelector('emoji-picker');
+    // toggle the 'hidden' attribute on the emoji picker
+    emojiPicker.hidden = !emojiPicker.hidden;
+}
+
+function addEmojiToTextarea(e) {
+  const emoji = e.detail.unicode;
+  const textarea = document.querySelector('.chatroom-textarea');
+  // Append the selected emoji to the textarea content
+  textarea.value += emoji;
 }
 
 function displaySystemMessage(msg) {
@@ -88,7 +114,7 @@ async function sendMessage() {
     };
 
     try {
-        socket.send(JSON.stringify({ type: 'message', message }));
+        socket.send(JSON.stringify({type: 'message', message, csrf_token: csrfToken}));
         document.querySelector('.chatroom-textarea').value = '';
     } catch (error) {
         alert("An error occurred while trying to send your message. Please check your network connection and try again.");
