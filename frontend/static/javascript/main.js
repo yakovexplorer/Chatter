@@ -18,7 +18,7 @@ async function login() {
     while (!Username) {
         let inputname = prompt(message);
 
-        inputname = sanitizeInput(inputname);
+        inputname = `${DOMPurify.sanitize(inputname)}`
 
         try {
             Username = inputname;
@@ -61,10 +61,6 @@ async function login() {
     }
 }
 
-function sanitizeInput(input) {
-    return input.replace(/</g, "<").replace(/>/g, ">");
-}
-
 function setupEventListeners() {
     document.querySelector('.chatroom-textarea').addEventListener('keydown', (e) => {
         if (e.keyCode === 13) {
@@ -76,8 +72,8 @@ function setupEventListeners() {
     document.querySelector('.button-v2').addEventListener('click', sendMessage);
 
     // Add these lines to your 'setupEventListeners' function.
-document.querySelector('#emoji-button').addEventListener('click', toggleEmojiPicker);
-document.querySelector('emoji-picker').addEventListener('emoji-click', addEmojiToTextarea);
+    document.querySelector('#emoji-button').addEventListener('click', toggleEmojiPicker);
+    document.querySelector('emoji-picker').addEventListener('emoji-click', addEmojiToTextarea);
 }
 
 function toggleEmojiPicker() {
@@ -87,16 +83,16 @@ function toggleEmojiPicker() {
 }
 
 function addEmojiToTextarea(e) {
-  const emoji = e.detail.unicode;
-  const textarea = document.querySelector('.chatroom-textarea');
-  // Append the selected emoji to the textarea content
-  textarea.value += emoji;
+    const emoji = e.detail.unicode;
+    const textarea = document.querySelector('.chatroom-textarea');
+    // Append the selected emoji to the textarea content
+    textarea.value += emoji;
 }
 
 function displaySystemMessage(msg) {
     const messagesDiv = document.querySelector('.main-contents');
     const messageElement = document.createElement('div');
-    messageElement.innerHTML = `<span class="chatroom-system chat-system">${msg}</span>`;
+    messageElement.innerHTML = `<span class="chatroom-system chat-system">${DOMPurify.sanitize(msg)}</span>`;
     messagesDiv.appendChild(messageElement);
     messagesDiv.scrollBy(0, messagesDiv.scrollHeight);
 }
@@ -122,7 +118,6 @@ async function sendMessage() {
 }
 
 function displayMessage(message) {
-
     let messageContent;
 
     if (/[_*~`#]/.test(message.content)) {
@@ -132,7 +127,7 @@ function displayMessage(message) {
     } else {
         // No special Markdown characters found in the message content,
         // Let's display it as plain text
-        messageContent = sanitizeInput(message.content);
+        messageContent = `${DOMPurify.sanitize(message.content)}`
     }
 
     const messagesDiv = document.querySelector('.main-contents');
@@ -158,10 +153,10 @@ function displayMessage(message) {
 
     messageElement.classList.add('chat-user');
 
-    messageElement.innerHTML = `<span class="chat-user-name">${message.name}</span>
+    messageElement.innerHTML = `<span class="chat-user-name">${DOMPurify.sanitize(message.name)}</span>
                         <div class="chat-user-container">
                             <div class="chat-user-message">
-                                <span class="chatroom-text5">${messageContent}</span>
+                                <span class="chatroom-text5">${DOMPurify.sanitize(messageContent)}</span>
                             </div>
                         </div>`;
 
@@ -178,7 +173,7 @@ function displayActiveUsers(users) {
         const userElement = document.createElement('div');
         userElement.classList.add('chatroom-user', 'user');
         userElement.innerHTML = `<div class="chatroom-text2">
-                                    <span class="chatroom-text3">${user}</span>
+                                    <span class="chatroom-text3">${DOMPurify.sanitize(user)}</span>
                                 </div>`;
 
         usersDiv.appendChild(userElement);
