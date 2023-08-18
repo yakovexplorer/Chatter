@@ -18,38 +18,22 @@ async function login() {
     while (!Username) {
         let inputname = prompt(message);
 
-        inputname = `${DOMPurify.sanitize(inputname)}`
-
         try {
             Username = inputname;
             socket = new WebSocket(`${API_URL}/${Username}`);
             socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                if (data.type === 'message') {
-                    displayMessage(data.message);
-                } else if (data.type === 'join') {
-                    displaySystemMessage(`${data.name} has joined the chat.`);
-                } else if (data.type === 'leave') {
-                    displaySystemMessage(`${data.name} has left the chat.`);
-                } else if (data.type === 'active_users') {
-                    displayActiveUsers(data.users);
-                } else if (data.type === 'csrf_token') {
-                    csrfToken = data.csrf_token;
-                } else if (data.type === 'ping') {
-                    socket.send(JSON.stringify({type: 'pong'}));
-                }
+                handleSocketMessage(data);
             }
             socket.onopen = (event) => {
                 alert("Successfully logged in! Enjoy.")
             }
             socket.onclose = (event) => {
-                if (event.code === 4000) {
-                    alert("The username is invalid or already in use. Please choose another one.");
-                    window.location.reload();
-                } else if (event.code === 4001) {
-                    alert("Invalid CSRF token. Please try again.");
-                    window.location.reload();
-                }
+                handleSocketClose(event);
+            }
+            socket.onerror = (event) => {
+                socket.send(JSON.stringify({type: 'leave'}));
+                socket.close();
             }
             window.addEventListener('beforeunload', () => {
                 socket.send(JSON.stringify({type: 'leave'}));
@@ -58,6 +42,32 @@ async function login() {
         } catch (error) {
             alert("An error occurred while trying to join the chat. Please check your network connection and try again.");
         }
+    }
+}
+
+function handleSocketMessage(data) {
+    if (data.type === 'message') {
+        displayMessage(data.message);
+    } else if (data.type === 'join') {
+        displaySystemMessage(`${data.name} has joined the chat.`);
+    } else if (data.type === 'leave') {
+        displaySystemMessage(`${data.name} has left the chat.`);
+    } else if (data.type === 'active_users') {
+        displayActiveUsers(data.users);
+    } else if (data.type === 'csrf_token') {
+        csrfToken = data.csrf_token;
+    } else if (data.type === 'ping') {
+        socket.send(JSON.stringify({type: 'pong'}));
+    }
+}
+
+function handleSocketClose(event) {
+    if (event.code === 4000) {
+        alert("The username is invalid or already in use. Please choose another one.");
+        window.location.reload();
+    } else if (event.code === 4001) {
+        alert("Invalid CSRF token. Please try again.");
+        window.location.reload();
     }
 }
 
@@ -92,13 +102,13 @@ function addEmojiToTextarea(e) {
 function displaySystemMessage(msg) {
     const messagesDiv = document.querySelector('.main-contents');
     const messageElement = document.createElement('div');
-    messageElement.innerHTML = `<span class="chatroom-system chat-system">${DOMPurify.sanitize(msg)}</span>`;
+    messageElement.innerHTML = `<span class="chatroom-system chat-system">${msg}</span>`;
     messagesDiv.appendChild(messageElement);
     messagesDiv.scrollBy(0, messagesDiv.scrollHeight);
 }
 
 async function sendMessage() {
-    const content = document.querySelector('.chatroom-textarea').value;
+    let content = document.querySelector('.chatroom-textarea').value;
 
     if (!content.trim()) {
         alert('Message must be provided.');
@@ -118,17 +128,6 @@ async function sendMessage() {
 }
 
 function displayMessage(message) {
-    let messageContent;
-
-    if (/[_*~`#]/.test(message.content)) {
-        // The message content contains characters used in Markdown (like *, _, ~, `)
-        // Let's parse it as Markdown
-        messageContent = marked.parse(message.content);
-    } else {
-        // No special Markdown characters found in the message content,
-        // Let's display it as plain text
-        messageContent = `${DOMPurify.sanitize(message.content)}`
-    }
 
     const messagesDiv = document.querySelector('.main-contents');
 
@@ -138,7 +137,7 @@ function displayMessage(message) {
         messageElement.classList.add('chat-you');
         messageElement.innerHTML = `<div class="chat-you-container">
                             <div class="chat-you-message">
-                                <span class="chatroom-text4">${messageContent}</span>
+                                <span class="chatroom-text4">${message.content}</span>
                             </div>
                         </div>`;
 
@@ -147,16 +146,16 @@ function displayMessage(message) {
 
         return;
     } else if (message.name === 'System') {
-        displaySystemMessage(messageContent);
+        displaySystemMessage(message.content);
         return;
     }
 
     messageElement.classList.add('chat-user');
 
-    messageElement.innerHTML = `<span class="chat-user-name">${DOMPurify.sanitize(message.name)}</span>
+    messageElement.innerHTML = `<span class="chat-user-name">${message.name}</span>
                         <div class="chat-user-container">
                             <div class="chat-user-message">
-                                <span class="chatroom-text5">${DOMPurify.sanitize(messageContent)}</span>
+                                <span class="chatroom-text5">${message.content}</span>
                             </div>
                         </div>`;
 
@@ -173,7 +172,7 @@ function displayActiveUsers(users) {
         const userElement = document.createElement('div');
         userElement.classList.add('chatroom-user', 'user');
         userElement.innerHTML = `<div class="chatroom-text2">
-                                    <span class="chatroom-text3">${DOMPurify.sanitize(user)}</span>
+                                    <span class="chatroom-text3">${user}</span>
                                 </div>`;
 
         usersDiv.appendChild(userElement);
